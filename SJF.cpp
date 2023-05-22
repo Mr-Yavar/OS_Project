@@ -5,9 +5,9 @@ using namespace std;
 class Process {
 public:
     int name;
-    int entranceTime, ProcessTime, exit, IntialProcessTime;
+    float entranceTime, ProcessTime, exit, IntialProcessTime;
 
-    Process(int name, int entranceTime, int ProcessTime) {
+    Process(int name, float entranceTime, float ProcessTime) {
         this->name = name;
         this->ProcessTime = ProcessTime;
         this->IntialProcessTime = ProcessTime;
@@ -59,7 +59,7 @@ int main() {
     }
 
     int indexOfProcess;
-    int TimeCounter = 0;
+    float TimeCounter = 0;
     while (true) {
         indexOfProcess = findMinProcess(ProcessArray, NumberOfProcess, TimeCounter);
         if (indexOfProcess == -1)
@@ -81,9 +81,9 @@ int main() {
 
 
     cout << "\t\t==============> Process <=============="<<endl;
-    int SumOFWaitingTime=0;
-    int SumOFResponseTime=0;
-    int tempWaitingTime,tempResponseTime;
+    float SumOFWaitingTime=0;
+    float SumOFResponseTime=0;
+    float tempWaitingTime,tempResponseTime;
 
     for (int i = 0; i < NumberOfProcess; i++) {
        tempResponseTime=ProcessArray[i].exit-ProcessArray[i].entranceTime;
