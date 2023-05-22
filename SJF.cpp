@@ -55,6 +55,7 @@ int main() {
         cin >> ProcessArray[i].entranceTime;
         cout << "Process Time : ";
         cin >> ProcessArray[i].ProcessTime;
+        ProcessArray[i].IntialProcessTime = ProcessArray[i].ProcessTime;
     }
 
     int indexOfProcess;
@@ -76,15 +77,23 @@ int main() {
 
 
     }
-    cout << TimeCounter;
+
+
+
+    cout << "\t\t==============> Process <=============="<<endl;
+    int SumOFWaitingTime=0;
+    int SumOFResponseTime=0;
+    int tempWaitingTime,tempResponseTime;
 
     for (int i = 0; i < NumberOfProcess; i++) {
-        ProcessArray[i].name = i;
-        cout << "Entrance Time : ";
-        cin >> ProcessArray[i].entranceTime;
-        cout << "Process Time : ";
-        cin >> ProcessArray[i].ProcessTime;
+       tempResponseTime=ProcessArray[i].exit-ProcessArray[i].entranceTime;
+       tempWaitingTime=tempResponseTime-ProcessArray[i].IntialProcessTime;
+
+       cout << "P[" << i << "] : "<< "Response Time : " << tempResponseTime << "   Waiting Time : "<<tempWaitingTime << endl;
+       SumOFResponseTime+=tempResponseTime;
+       SumOFWaitingTime+=tempWaitingTime;
     }
+    cout << "Ave. Of Response Time : "<<SumOFResponseTime/NumberOfProcess << " \nAve. Of Waiting Time : "<<SumOFWaitingTime/NumberOfProcess;
 
 
     return 0;
