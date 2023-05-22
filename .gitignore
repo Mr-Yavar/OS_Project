@@ -3,6 +3,7 @@
 /.idea/modules.xml
 /.idea/OS_Project.iml
 /.idea/vcs.xml
+/CMakeLists.txt
 /cmake-build-debug/.cmake/api/v1/query/cache-v2
 /cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1
 /cmake-build-debug/.cmake/api/v1/query/codemodel-v2

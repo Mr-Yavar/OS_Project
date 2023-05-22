@@ -19,7 +19,7 @@ public:
     }
 };
 
-int findMinProcess(Process ProcessArray[], int NumberOfProcess, int Now) {
+int findMinProcess(Process ProcessArray[], int NumberOfProcess, float Now) {
     int ShortestProcessTime = INT32_MAX;
     int indexOfProcess = -1; // Flag
     int EnteredProcesses =0;
@@ -44,7 +44,7 @@ int findMinProcess(Process ProcessArray[], int NumberOfProcess, int Now) {
 
 int main() {
     int NumberOfProcess;
-    cout << "\t\t=========> SJF|SPN <=========" << endl;
+    cout << "\t\t==============> SJF|SPN <==============" << endl;
     cout << "Number of Process : ";
     cin >> NumberOfProcess;
     Process *ProcessArray = new Process[NumberOfProcess];
@@ -75,12 +75,11 @@ int main() {
         SelectedProcess->ProcessTime = 0;
         SelectedProcess->exit = TimeCounter;
 
-
     }
 
 
 
-    cout << "\t\t==============> Process <=============="<<endl;
+    cout << "\t\t==============> SJF/SPN Output <=============="<<endl;
     float SumOFWaitingTime=0;
     float SumOFResponseTime=0;
     float tempWaitingTime,tempResponseTime;
