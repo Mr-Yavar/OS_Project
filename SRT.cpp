@@ -43,7 +43,7 @@ int findMinProcess(Process ProcessArray[], int NumberOfProcess, int Now) {
 
 int main() {
     int NumberOfProcess;
-    cout << "\t\t==============> SRT Output <==============" << endl;
+    cout << "\t\t==============> SRT <==============" << endl;
     cout << "Number of Process : ";
     cin >> NumberOfProcess;
     Process *ProcessArray = new Process[NumberOfProcess];
@@ -98,7 +98,7 @@ int main() {
 
 
 
-    cout << "\t\t==============> SRT Process <=============="<<endl;
+    cout << "\t\t==============> SRT Output <=============="<<endl;
     float SumOFWaitingTime=0;
     float SumOFResponseTime=0;
     float tempWaitingTime,tempResponseTime;
