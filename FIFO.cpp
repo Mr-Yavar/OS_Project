@@ -1,83 +1,109 @@
 #include <iostream>
 #include <algorithm>
+
 using namespace std;
 
 
 class Process {
-   public:
-    int name,entrance_time, burst_time, exit_time ;
+public:
+    int name;
+    float entrance_Time, Burst_Time, Exit_Time, IntialBurst_Time;
 
- Process(int name, int  entranceTime, int ProcessTime) {
+    Process(int name, float entrance_Time, float Burst_Time) {
         this->name = name;
-        this->burst_time= ProcessTime;
-        this->entrance_time = entranceTime;
+        this->Burst_Time = Burst_Time;
+        this->IntialBurst_Time = Burst_Time;
+        this->entrance_Time = entrance_Time;
     }
 
-  Process() {
+    Process() {
 
     }
-
 };
-void fifo(Process processes[],int numberOfProcesses){
 
+int findOldestProcess(Process ProcessArray[], int numberOfProcesses, float Now) {
+    int indexOfProcess = -1; // Flag
+    int EnteredProcesses = 0;
+    int i;
+    int EntranceTimeOfProcesses = Now;
+    for (i = 0; i < numberOfProcesses; i++) {
+        if (ProcessArray[i].entrance_Time <= Now) {
+            if(ProcessArray[i].Burst_Time != 0) {
+                if (EntranceTimeOfProcesses > ProcessArray[i].entrance_Time) {
+                    indexOfProcess = i;
+                    EntranceTimeOfProcesses = ProcessArray[i].entrance_Time;
+                } else if (EntranceTimeOfProcesses == ProcessArray[i].entrance_Time) {
+                    if(indexOfProcess > i || indexOfProcess == -1){
+                        indexOfProcess = i;
+                    }
+                }
+            }
+            EnteredProcesses++;
+        }
+    }
+    if (EnteredProcesses < numberOfProcesses && indexOfProcess == -1)
+        return -2;
 
-int i,j;
-int waiting_time=0;
-long int average_waiting_time=0;
-int response_time=0;
-int average_response_time=0;
-cout<<"Waiting Time Of" ;
-//print wtime for each process
-for ( i = 1; i < numberOfProcesses; i++)
-{
-waiting_time=processes[i].exit_time-processes[i].burst_time;
-cout<<"process ["<<i<<"] = "<<waiting_time;
-average_waiting_time+=waiting_time;
-
-
-}
-//print avwtime for  processes
-cout<<'Average Waiting Time = '<<average_waiting_time/numberOfProcesses;
-
-
-
-//print wtime for each process
-for (  j = 0; j < numberOfProcesses; j++)
-{
-response_time=waiting_time+processes[i].burst_time;
-cout<<"process ["<<i<<"] = "<<response_time;
-average_response_time+=response_time;
-
-}
-
-//print avrtime for  processes
-
-cout<<'Average Waiting Time = '<<(int)average_waiting_time/numberOfProcesses;
+    return indexOfProcess;
 
 
 }
 
 
+int main() {
 
-
-int main(){
-
-  int NProcess;
+    int numberOfProcesses;
     cout << "\t\t==============> FIFO <==============" << endl;
     cout << "Number of Process : ";
-    cin >> NProcess;
-    Process *ProcessArray = new Process[NProcess];
+    cin >> numberOfProcesses;
+    Process *ProcessArray = new Process[numberOfProcesses];
 
-    for (int i = 0; i < NProcess; i++) {
+    for (int i = 0; i < numberOfProcesses; i++) {
         ProcessArray[i].name = i;
         cout << "Entrance Time : ";
-        cin >> ProcessArray[i].entrance_time;
+        cin >> ProcessArray[i].entrance_Time;
         cout << "Process Time : ";
-        cin >> ProcessArray[i].burst_time;
+        cin >> ProcessArray[i].Burst_Time;
+        ProcessArray[i].IntialBurst_Time = ProcessArray[i].Burst_Time;
     }
 
-fifo(ProcessArray,NProcess);
+    int indexOfProcess;
+    float TimeCounter = 0;
+    while (true) {
+        indexOfProcess = findOldestProcess(ProcessArray, numberOfProcesses, TimeCounter);
+        if (indexOfProcess == -1)
+            break;
+        else if (indexOfProcess == -2) {
+            TimeCounter++;
+            continue;
+        }
 
-return 0 ;
+
+        Process *SelectedProcess = &ProcessArray[indexOfProcess];
+        TimeCounter += SelectedProcess->Burst_Time;
+        SelectedProcess->Burst_Time = 0;
+        SelectedProcess->Exit_Time = TimeCounter;
+
+
+    }
+
+
+
+    cout << "\t\t==============> FIFO Output <=============="<<endl;
+    float SumOFWaitingTime=0;
+    float SumOFResponseTime=0;
+    float tempWaitingTime,tempResponseTime;
+
+    for (int i = 0; i < numberOfProcesses; i++) {
+        tempResponseTime=ProcessArray[i].Exit_Time-ProcessArray[i].entrance_Time;
+        tempWaitingTime=tempResponseTime-ProcessArray[i].IntialBurst_Time;
+
+        cout << "P[" << i << "] : "<< "Response Time : " << tempResponseTime << "   Waiting Time : "<<tempWaitingTime << endl;
+        SumOFResponseTime+=tempResponseTime;
+        SumOFWaitingTime+=tempWaitingTime;
+    }
+    cout << "Ave. Of Response Time : "<<SumOFResponseTime/numberOfProcesses << " \nAve. Of Waiting Time : "<<SumOFWaitingTime/numberOfProcesses;
+
+    return 0;
 
 }

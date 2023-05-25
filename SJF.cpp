@@ -5,14 +5,13 @@ using namespace std;
 class Process {
 public:
     int name;
-    float entranceTime, ProcessTime, exit, IntialProcessTime;
-    float highestResposeRatio;
+    float entrance_Time, Burst_Time, Exit_Time, IntialBurst_Time;
 
-    Process(int name, float entranceTime, float ProcessTime) {
+    Process(int name, float entrance_Time, float Burst_Time) {
         this->name = name;
-        this->ProcessTime = ProcessTime;
-        this->IntialProcessTime = ProcessTime;
-        this->entranceTime = entranceTime;
+        this->Burst_Time = Burst_Time;
+        this->IntialBurst_Time = Burst_Time;
+        this->entrance_Time = entrance_Time;
     }
 
     Process() {
@@ -21,16 +20,16 @@ public:
 };
 
 int findMinProcess(Process ProcessArray[], int NumberOfProcess, float Now) {
-    int ShortestProcessTime = INT32_MAX;
+    int ShortestBurstTime = INT32_MAX;
     int indexOfProcess = -1; // Flag
     int EnteredProcesses =0;
     int i;
     for (i = 0; i < NumberOfProcess; i++) {
-        if (ProcessArray[i].entranceTime <= Now) {
-            if (ShortestProcessTime > ProcessArray[i].ProcessTime &&
-                ProcessArray[i].ProcessTime != 0) {
+        if (ProcessArray[i].entrance_Time <= Now) {
+            if (ShortestBurstTime > ProcessArray[i].Burst_Time &&
+                ProcessArray[i].Burst_Time != 0) {
                 indexOfProcess = i;
-                ShortestProcessTime = ProcessArray[i].ProcessTime;
+                ShortestBurstTime = ProcessArray[i].Burst_Time;
             }
             EnteredProcesses++;
         }
@@ -53,10 +52,10 @@ int main() {
     for (int i = 0; i < NumberOfProcess; i++) {
         ProcessArray[i].name = i;
         cout << "Entrance Time : ";
-        cin >> ProcessArray[i].entranceTime;
-        cout << "Process Time : ";
-        cin >> ProcessArray[i].ProcessTime;
-        ProcessArray[i].IntialProcessTime = ProcessArray[i].ProcessTime;
+        cin >> ProcessArray[i].entrance_Time;
+        cout << "Burst Time : ";
+        cin >> ProcessArray[i].Burst_Time;
+        ProcessArray[i].IntialBurst_Time = ProcessArray[i].Burst_Time;
     }
 
     int indexOfProcess;
@@ -72,9 +71,9 @@ int main() {
 
         Process *SelectedProcess = &ProcessArray[indexOfProcess];
 
-        TimeCounter += SelectedProcess->ProcessTime;
-        SelectedProcess->ProcessTime = 0;
-        SelectedProcess->exit = TimeCounter;
+        TimeCounter += SelectedProcess->Burst_Time;
+        SelectedProcess->Burst_Time = 0;
+        SelectedProcess->Exit_Time = TimeCounter;
 
     }
 
@@ -86,8 +85,8 @@ int main() {
     float tempWaitingTime,tempResponseTime;
 
     for (int i = 0; i < NumberOfProcess; i++) {
-       tempResponseTime=ProcessArray[i].exit-ProcessArray[i].entranceTime;
-       tempWaitingTime=tempResponseTime-ProcessArray[i].IntialProcessTime;
+       tempResponseTime=ProcessArray[i].Exit_Time-ProcessArray[i].entrance_Time;
+       tempWaitingTime=tempResponseTime-ProcessArray[i].IntialBurst_Time;
 
        cout << "P[" << i << "] : "<< "Response Time : " << tempResponseTime << "   Waiting Time : "<<tempWaitingTime << endl;
        SumOFResponseTime+=tempResponseTime;
