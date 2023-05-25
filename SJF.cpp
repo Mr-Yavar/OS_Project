@@ -6,6 +6,7 @@ class Process {
 public:
     int name;
     float entranceTime, ProcessTime, exit, IntialProcessTime;
+    float highestResposeRatio;
 
     Process(int name, float entranceTime, float ProcessTime) {
         this->name = name;
