@@ -26,7 +26,7 @@ int waiting_time=0;
 long int average_waiting_time=0;
 int response_time=0;
 int average_response_time=0;
-
+cout<<"Waiting Time Of" ;
 //print wtime for each process
 for ( i = 1; i < numberOfProcesses; i++)
 {
