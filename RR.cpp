@@ -1,11 +1,8 @@
 #include <iostream>
-#include <algorithm>
+#include <queue>
 
 using namespace std;
 
-/*********
-تکمیل نیست
-**////
 
 class Process {
 public:
@@ -24,47 +21,57 @@ public:
     }
 };
 
+bool searchInQueue(int searchValue, queue<int> q) {
+    bool found = false;
+    int queueSize = q.size();
+    for (int i = 0; i < queueSize; i++) {
+        if (q.front() == searchValue) {
+            found = true;
+            break;
+        }
+        q.push(q.front());
+        q.pop();
+    }
+    return found;
+}
 
-int findOldestProcess(Process ProcessArray[], int numberOfProcesses, float Now,int chosenIndexes[]) {
-    int indexOfProcess = -1; // Flag
+void printQueue(queue<int> q) {
+    queue<int> tmp = q;
+    cout << "Queue: ";
+    while (!tmp.empty()) {
+        cout << tmp.front() << "\t";
+        tmp.pop();
+    }
+    cout << endl;
+}
+
+int UpdateReadyQueue(Process ProcessArray[], int numberOfProcesses, float Now, queue<int> &Ready_Queue, int lastIndex) {
+
     int EnteredProcesses = 0;
     int i;
-    float EntranceTimeOfProcesses = Now;
+
+
     for (i = 0; i < numberOfProcesses; i++) {
         if (ProcessArray[i].entrance_Time <= Now) {
-            if(ProcessArray[i].Burst_Time != 0) {
-                bool processAlreadyChosen = false;
-                for (int j = 0; j < (sizeof(chosenIndexes)/ sizeof(int)); j++) {
-                    if (chosenIndexes[j] == i) {
-                        processAlreadyChosen = true;
-                        break;
-                    }
+            if (ProcessArray[i].Burst_Time != 0) {
+
+                if (!searchInQueue(i, Ready_Queue) && (lastIndex != i)) {
+
+
+                    Ready_Queue.push(i);
+
                 }
-                if(processAlreadyChosen)
-                    continue;
-                    if (EntranceTimeOfProcesses > ProcessArray[i].entrance_Time) {
-                        indexOfProcess = i;
-                        EntranceTimeOfProcesses = ProcessArray[i].entrance_Time;
-                    } else if (EntranceTimeOfProcesses == ProcessArray[i].entrance_Time) {
-                        if(indexOfProcess > i || indexOfProcess == -1){
-                            indexOfProcess = i;
-                        }
-                    }
             }
             EnteredProcesses++;
         }
     }
-    if(currentIndex!=-1 && indexOfProcess==-1){
-        indexOfProcess=currentIndex;
-    }
 
-    if ((EnteredProcesses < numberOfProcesses && indexOfProcess == -1 ) || ProcessArray[currentIndex].Burst_Time==0)
-        return -2;
 
-    return indexOfProcess;
+    return EnteredProcesses;
 
 
 }
+
 int main() {
     float Quantum;
     int numberOfProcesses;
@@ -83,48 +90,67 @@ int main() {
         cin >> ProcessArray[i].Burst_Time;
         ProcessArray[i].IntialBurst_Time = ProcessArray[i].Burst_Time;
     }
-
-    int indexOfProcess=-1;
+    queue<int> Ready_Queue;
+    int indexOfProcess = -1;
     float TimeCounter = 0;
-    int *chosenIndex = new int[numberOfProcesses];
-    for (int i = 0; i < numberOfProcesses; i++) {
-        chosenIndex[i]=-1;
-    }
+    int entredProcesses = UpdateReadyQueue(ProcessArray, numberOfProcesses, TimeCounter, Ready_Queue, indexOfProcess);
     while (true) {
-        indexOfProcess = findOldestProcess(ProcessArray, numberOfProcesses, TimeCounter,chosenIndex);
-        if (indexOfProcess == -1)
-            break;
-        else if (indexOfProcess == -2) {
+
+
+        if (Ready_Queue.size() != 0) {
+            indexOfProcess = Ready_Queue.front();
+            Ready_Queue.pop();
+        } else if (entredProcesses < numberOfProcesses) {
             TimeCounter++;
             continue;
+        } else {
+            break;
         }
 
-        chosenIndex[indexOfProcess]=indexOfProcess;
+        cout << "P[" << indexOfProcess + 1 << "] : " << TimeCounter << "\t";
+
         Process *SelectedProcess = &ProcessArray[indexOfProcess];
-        TimeCounter += Quantum;
-        SelectedProcess->Burst_Time -= Quantum;
-        if(SelectedProcess->Burst_Time==0)
-            SelectedProcess->Exit_Time = TimeCounter;
+        for (int i = 0; i < Quantum; i++) {
+            TimeCounter++;
+            SelectedProcess->Burst_Time--;
+
+            if (SelectedProcess->Burst_Time == 0) {
+                indexOfProcess = -1;
+                SelectedProcess->Exit_Time = TimeCounter;
+                break;
+            }
+
+            if (i + 1 != Quantum)
+                entredProcesses = UpdateReadyQueue(ProcessArray, numberOfProcesses, TimeCounter, Ready_Queue,
+                                                   indexOfProcess);
+        }
+
+        if (indexOfProcess != -1)
+            Ready_Queue.push(indexOfProcess);
+
+        entredProcesses = UpdateReadyQueue(ProcessArray, numberOfProcesses, TimeCounter, Ready_Queue, indexOfProcess);
+        cout << TimeCounter << "\n";
 
 
     }
 
 
-
-    cout << "\t\t==============> FIFO Output <=============="<<endl;
-    float SumOFWaitingTime=0;
-    float SumOFResponseTime=0;
-    float tempWaitingTime,tempResponseTime;
+    cout << "\t\t==============> Round Robin Output <==============" << endl;
+    float SumOFWaitingTime = 0;
+    float SumOFResponseTime = 0;
+    float tempWaitingTime, tempResponseTime;
 
     for (int i = 0; i < numberOfProcesses; i++) {
-        tempResponseTime=ProcessArray[i].Exit_Time-ProcessArray[i].entrance_Time;
-        tempWaitingTime=tempResponseTime-ProcessArray[i].IntialBurst_Time;
+        tempResponseTime = ProcessArray[i].Exit_Time - ProcessArray[i].entrance_Time;
+        tempWaitingTime = tempResponseTime - ProcessArray[i].IntialBurst_Time;
 
-        cout << "P[" << i << "] : "<< "Response Time : " << tempResponseTime << "   Waiting Time : "<<tempWaitingTime << endl;
-        SumOFResponseTime+=tempResponseTime;
-        SumOFWaitingTime+=tempWaitingTime;
+        cout << "P[" << i << "] : " << "Response Time : " << tempResponseTime << "   Waiting Time : " << tempWaitingTime
+             << endl;
+        SumOFResponseTime += tempResponseTime;
+        SumOFWaitingTime += tempWaitingTime;
     }
-    cout << "Ave. Of Response Time : "<<SumOFResponseTime/numberOfProcesses << " \nAve. Of Waiting Time : "<<SumOFWaitingTime/numberOfProcesses;
+    cout << "Ave. Of Response Time : " << SumOFResponseTime / numberOfProcesses << " \nAve. Of Waiting Time : "
+         << SumOFWaitingTime / numberOfProcesses;
 
     return 0;
 
