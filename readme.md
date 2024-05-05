@@ -8,3 +8,8 @@ A scheduling algorithms in OS the algorithm that defines how much CPU time must 
     <li>First Come First Served, FCFS/FIFO</li>
     <li>Round Robin, RR</li>
 </ul>
+
+<hr>
+
+<h2>Thanks</h2>
+<p>Thanks to <strong><i>Alireza Ardani</i></strong> for contributing this project.</p>
